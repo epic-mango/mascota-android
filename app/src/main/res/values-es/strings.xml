@@ -6,4 +6,14 @@
     <string name="iniciar_sesion">Iniciar Sesión</string>
     <string name="crear_cuenta">Crear una cuenta</string>
     <string name="usuario_existe">El usuario ya existe</string>
+    <string name="cerrar_sesion">Cerrar sesión</string>
+    <string name="faltan_datos">Faltan datos</string>
+    <string name="mascotas">Mascotas</string>
+    <string name="nombre_mascota">Nombre de la mascota</string>
+    <string name="especie">Especie</string>
+    <string name="raza">Raza</string>
+    <string name="fecha_nacimiento">Día de nacimiento</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="aceptar">Aceptar</string>
 </resources>

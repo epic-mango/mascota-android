@@ -19,6 +19,11 @@
         <item name="colorOnPrimary">@color/black</item>
     </style>
 
+    <style name="Boton.Negativo" parent="Widget.AppCompat.Button">
+        <item name="colorPrimary">@color/rojo_suave</item>
+        <item name="colorOnPrimary">@color/black</item>
+    </style>
+
     <style name="Theme.Mascota.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

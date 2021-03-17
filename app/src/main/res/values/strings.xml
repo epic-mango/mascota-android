@@ -5,14 +5,17 @@
     <string name="iniciar_sesion">Login</string>
     <string name="crear_cuenta">Create Account</string>
     <string name="usuario_existe">User already exists</string>
-    <string name="title_activity_mascotas">ActivityMascotas</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
-    <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="cerrar_sesion">Logout</string>
+    <string name="faltan_datos">Missing data</string>
+    <string name="mascotas">Pets</string>
+    <string name="nombre_mascota">Pet name</string>
+    <string name="especie">Species</string>
+    <string name="raza">Breed</string>
+    <string name="fecha_nacimiento">Day of birth</string>
+    <string name="eliminar">Delete</string>
+    <string name="cancelar">Cancel</string>
+    <string name="aceptar">Accept</string>
 
 </resources>

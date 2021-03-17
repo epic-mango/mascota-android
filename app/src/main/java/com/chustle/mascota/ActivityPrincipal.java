@@ -80,10 +80,10 @@ public class ActivityPrincipal extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             Log.e("ERROR", "onErrorResponse: ", error.getCause());
                         }
-                    }){
+                    }) {
                 @Override
                 public Map<String, String> getHeaders() throws AuthFailureError {
-                    Map <String, String>  headers = new HashMap<>();
+                    Map<String, String> headers = new HashMap<>();
 
                     headers.put("Authorization", token);
 
@@ -94,7 +94,6 @@ public class ActivityPrincipal extends AppCompatActivity {
             queue.add(request);
         }
     }
-
 
 
     private void login(String response) {
@@ -112,8 +111,8 @@ public class ActivityPrincipal extends AppCompatActivity {
 
                 finish();
             } else {
-                if(token.equals("23000"))
-                Toast.makeText(this, getString(R.string.usuario_existe), Toast.LENGTH_SHORT).show();
+                if (token.equals("23000"))
+                    Toast.makeText(this, getString(R.string.usuario_existe), Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(this, token, Toast.LENGTH_SHORT).show();
             }
@@ -152,8 +151,8 @@ public class ActivityPrincipal extends AppCompatActivity {
                             }
                     ) {
                         @Override
-                        protected Map<String, String> getParams(){
-                            Map <String, String> parametros = new HashMap<>();
+                        protected Map<String, String> getParams() {
+                            Map<String, String> parametros = new HashMap<>();
 
                             parametros.put("id", etId.getText().toString());
                             parametros.put("pass", etPass.getText().toString());
@@ -170,7 +169,7 @@ public class ActivityPrincipal extends AppCompatActivity {
 
                     cola.add(peticion);
                 } else {
-                    Toast.makeText(ActivityPrincipal.this, "Faltan datos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivityPrincipal.this, getString(R.string.faltan_datos), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -179,32 +178,38 @@ public class ActivityPrincipal extends AppCompatActivity {
     private void initBtnIniciar() {
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
 
-                RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
+                if (!etId.getText().toString().equals("") && !etId.getText().toString().equals("")) {
 
-                String URL = Uri.parse(Config.URL + "cuenta.php")
-                        .buildUpon()
-                        .appendQueryParameter("id", etId.getText().toString())
-                        .appendQueryParameter("pass", etPass.getText().toString())
-                        .build().toString();
 
-                StringRequest request = new StringRequest(Request.Method.GET,
-                        URL,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                login(response);
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e("ERROR", "onErrorResponse: ", error.getCause());
-                            }
-                        });
+                    RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
 
-                queue.add(request);
+                    String URL = Uri.parse(Config.URL + "cuenta.php")
+                            .buildUpon()
+                            .appendQueryParameter("id", etId.getText().toString())
+                            .appendQueryParameter("pass", etPass.getText().toString())
+                            .build().toString();
+
+                    StringRequest request = new StringRequest(Request.Method.GET,
+                            URL,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    login(response);
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    Log.e("ERROR", "onErrorResponse: ", error.getCause());
+                                }
+                            });
+
+                    queue.add(request);
+                } else
+                    Toast.makeText(ActivityPrincipal.this, getString(R.string.faltan_datos), Toast.LENGTH_SHORT).show();
+
             }
         });
     }
