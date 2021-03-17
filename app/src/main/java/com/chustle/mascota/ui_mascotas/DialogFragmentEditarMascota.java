@@ -22,7 +22,6 @@ import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -82,6 +81,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
         initSpnEspecie(v);
 
         spnRaza = v.findViewById(R.id.spnRaza);
+        initSpnRaza();
 
         initETNacimiento(v);
 
@@ -107,6 +107,20 @@ public class DialogFragmentEditarMascota extends DialogFragment {
 
     }
 
+    private void initSpnRaza() {
+        spnRaza.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mascota.raza = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
     private String formatearFecha(long time) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd / MMM / yyyy");
         return sdf.format(new Date(time));
@@ -125,8 +139,6 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                     Toast.makeText(getActivity().getApplicationContext(), getString(R.string.faltan_datos), Toast.LENGTH_SHORT).show();
                 else {
                     mascota.nombre = etNombreMascota.getText().toString();
-                    mascota.especie = spnEspecie.getSelectedItemPosition();
-                    mascota.raza = spnEspecie.getSelectedItemPosition();
                     mascota.nacimiento = calendar.getTimeInMillis();
 
                     if (mascota.id == -1) {
@@ -141,6 +153,68 @@ public class DialogFragmentEditarMascota extends DialogFragment {
     }
 
     private void putMascota() {
+
+
+        RequestQueue cola = Volley.newRequestQueue(getContext());
+
+        String URL = Uri.parse(Config.URL + "mascotas.php")
+                .buildUpon()
+                .build().toString();
+
+        StringRequest peticion = new StringRequest(Request.Method.PUT,
+                URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject json = new JSONObject(response);
+                            String estado = json.getString("estado");
+                            String id = json.getString("id");
+
+                            if (estado.equals("true")) {
+                                listener.aceptar(mascota);
+                                dismiss();
+                            } else
+                                Toast.makeText(getContext(), "Error: " + id, Toast.LENGTH_SHORT).show();
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), getString(R.string.error_red), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                params.put("nombre", mascota.nombre);
+                params.put("especie", Integer.toString(mascota.especie));
+                params.put("raza", Integer.toString(mascota.raza));
+                params.put("nacimiento", Long.toString(mascota.nacimiento));
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+
+                headers.put("Authorization", getActivity().getSharedPreferences("cuenta", Context.MODE_PRIVATE).getString("token", ""));
+
+                return headers;
+            }
+        };
+
+        peticion.setRetryPolicy(new DefaultRetryPolicy(3600, 0, 0));
+        cola.add(peticion);
+
     }
 
     private void postMascota() {
@@ -163,6 +237,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                             if (estado.equals("true")) {
                                 mascota.id = Integer.parseInt(id);
                                 listener.aceptar(mascota);
+                                dismiss();
                             } else
                                 Toast.makeText(getContext(), "Error: " + id, Toast.LENGTH_SHORT).show();
 
@@ -176,7 +251,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        Toast.makeText(getContext(), getString(R.string.error_red), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
@@ -207,6 +282,12 @@ public class DialogFragmentEditarMascota extends DialogFragment {
 
     private void initBtnCancelar(View v) {
         btnCancelar = v.findViewById(R.id.btnCancelar);
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
 
@@ -272,6 +353,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                 setSpinnerAdapter(spnRaza, razas);
                 spnRaza.setSelection(mascota.raza);
 
+                mascota.especie = position;
             }
 
             @Override

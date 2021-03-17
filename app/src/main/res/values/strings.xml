@@ -17,5 +17,6 @@
     <string name="eliminar">Delete</string>
     <string name="cancelar">Cancel</string>
     <string name="aceptar">Accept</string>
+    <string name="error_red">Network error</string>
 
 </resources>
