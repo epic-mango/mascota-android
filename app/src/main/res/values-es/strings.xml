@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mascota</string>
+    <string name="ID">ID de usuario</string>
+    <string name="pass">Contraseña</string>
+    <string name="iniciar_sesion">Iniciar Sesión</string>
+    <string name="crear_cuenta">Crear una cuenta</string>
+    <string name="usuario_existe">El usuario ya existe</string>
+</resources>
