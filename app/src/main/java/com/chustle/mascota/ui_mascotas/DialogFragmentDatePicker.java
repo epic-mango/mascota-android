@@ -1,4 +1,4 @@
-package com.chustle.mascota;
+package com.chustle.mascota.ui_mascotas;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Mascota"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ActivityMascotas"></activity>
+        <activity android:name=".ui_mascotas.ActivityMascotas"></activity>
         <activity android:name=".ActivityPrincipal">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
