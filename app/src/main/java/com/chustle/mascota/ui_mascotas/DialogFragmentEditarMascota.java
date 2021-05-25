@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -166,28 +167,30 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.d("Response",response);
+
                         try {
-                            JSONObject json = new JSONObject(response);
-                            String estado = json.getString("estado");
-                            String id = json.getString("id");
+
+
+                        JSONObject json = new JSONObject(response);
+                           String estado = json.getString("estado");
 
                             if (estado.equals("true")) {
                                 listener.aceptar(mascota);
                                 dismiss();
                             } else
-                                Toast.makeText(getContext(), "Error: " + id, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
 
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getContext(), getString(R.string.error_red), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.error_red) + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }) {
             @Override
@@ -198,7 +201,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                 params.put("especie", Integer.toString(mascota.especie));
                 params.put("raza", Integer.toString(mascota.raza));
                 params.put("nacimiento", Long.toString(mascota.nacimiento));
-
+                params.put("id", Integer.toString(mascota.id));
                 return params;
             }
 
