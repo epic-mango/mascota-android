@@ -18,5 +18,7 @@
     <string name="cancelar">Cancel</string>
     <string name="aceptar">Accept</string>
     <string name="error_red">Network error</string>
+    <string name="advertencia_eliminar">Delete this pet?</string>
+    <string name="error_eliminar">The pet could not be deleted</string>
 
 </resources>

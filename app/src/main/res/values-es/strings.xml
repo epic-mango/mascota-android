@@ -17,4 +17,6 @@
     <string name="cancelar">Cancelar</string>
     <string name="aceptar">Aceptar</string>
     <string name="error_red">Error de red</string>
+    <string name="advertencia_eliminar">¿Eliminar esta mascota?</string>
+    <string name="error_eliminar">No se ha podido eliminar la mascota</string>
 </resources>
