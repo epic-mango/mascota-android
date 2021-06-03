@@ -19,4 +19,8 @@
     <string name="error_red">Error de red</string>
     <string name="advertencia_eliminar">¿Eliminar esta mascota?</string>
     <string name="error_eliminar">No se ha podido eliminar la mascota</string>
+    <string name="agregar_mascota">Agregar mascota</string>
+    <string name="editar_mascota">Editar mascota</string>
+    <string name="agregar_alimento">Añadir alimentos o bebidas</string>
+    <string name="agregar_horario">Añadir horario</string>
 </resources>

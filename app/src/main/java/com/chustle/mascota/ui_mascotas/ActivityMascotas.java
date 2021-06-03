@@ -31,6 +31,8 @@ import com.chustle.mascota.ActivityPrincipal;
 import com.chustle.mascota.Modelo.Mascota;
 import com.chustle.mascota.R;
 import com.chustle.mascota.REST.Config;
+import com.chustle.mascota.animator.ViewAnimation;
+import com.chustle.mascota.ui_alimentacion.ActivityAlimentacion;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -46,6 +48,7 @@ public class ActivityMascotas extends AppCompatActivity {
     RecyclerView rvMascotas;
     FloatingActionButton fabAgregarMascota;
     ArrayList<Mascota> mascotas = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,11 +82,11 @@ public class ActivityMascotas extends AppCompatActivity {
                             String estado = json.getString("estado");
                             JSONArray datos = json.getJSONArray("datos");
 
-                            Log.i("", "onResponse: ");
+                            Log.i("", "onResponse: "+ response);
                             if (estado.equals("true")) {
 
-                                for(int i = 0 ; i < datos.length(); i++){
-                                    JSONObject dato =(JSONObject) datos.get(i);
+                                for (int i = 0; i < datos.length(); i++) {
+                                    JSONObject dato = (JSONObject) datos.get(i);
                                     Mascota mascota = new Mascota();
                                     mascota.id = Integer.parseInt(dato.getString("id"));
                                     mascota.nombre = dato.getString("nombre");
@@ -97,6 +100,9 @@ public class ActivityMascotas extends AppCompatActivity {
                                     rvMascotas.getAdapter().notifyItemInserted(mascotas.indexOf(mascota));
                                 }
                             }
+
+                            if (mascotas.size()==0)
+                                agregarMascota();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -126,22 +132,29 @@ public class ActivityMascotas extends AppCompatActivity {
         cola.add(peticion);
     }
 
+    private void agregarMascota(){
+
+        DialogFragment dialogFragment = new DialogFragmentEditarMascota(new DialogFragmentEditarMascota.EditarMascotaListener() {
+            @Override
+            public void aceptar(Mascota mascota) {
+                mascotas.add(mascota);
+                rvMascotas.getAdapter().notifyItemInserted(mascotas.indexOf(mascota));
+
+
+            }
+        }, new Mascota());
+
+        dialogFragment.show(getSupportFragmentManager(), "");
+    }
+
     private void initFABAgregarMascota() {
+
+
 
         fabAgregarMascota.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment dialogFragment = new DialogFragmentEditarMascota(new DialogFragmentEditarMascota.EditarMascotaListener() {
-                    @Override
-                    public void aceptar(Mascota mascota) {
-                        mascotas.add(mascota);
-                        rvMascotas.getAdapter().notifyItemInserted(mascotas.indexOf(mascota));
-
-
-                    }
-                }, new Mascota());
-
-                dialogFragment.show(getSupportFragmentManager(), "");
+                agregarMascota();
             }
         });
 
@@ -155,16 +168,10 @@ public class ActivityMascotas extends AppCompatActivity {
         rvMascotas.setAdapter(new AdapterMascotas(mascotas, new AdapterMascotas.AdapterMascotasListener() {
             @Override
             public void onItemClick(int position) {
-                DialogFragment dialogFragment = new DialogFragmentEditarMascota(new DialogFragmentEditarMascota.EditarMascotaListener() {
-                    @Override
-                    public void aceptar(Mascota mascota) {
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", mascotas.get(position).id);
 
-                        rvMascotas.getAdapter().notifyItemChanged(mascotas.indexOf(mascota));
-
-                    }
-                },mascotas.get(position));
-
-                dialogFragment.show(getSupportFragmentManager(), null);
+                startActivity(new Intent(getApplicationContext(), ActivityAlimentacion.class).putExtras(bundle));
             }
 
             @Override

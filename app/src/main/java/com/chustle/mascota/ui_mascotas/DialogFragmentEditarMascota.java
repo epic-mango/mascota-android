@@ -73,6 +73,8 @@ public class DialogFragmentEditarMascota extends DialogFragment {
 
         builder.setView(root);
 
+        builder.setTitle(mascota.id==-1?getString(R.string.agregar_mascota):getString(R.string.editar_mascota));
+
         return builder.create();
     }
 

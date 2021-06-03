@@ -20,5 +20,9 @@
     <string name="error_red">Network error</string>
     <string name="advertencia_eliminar">Delete this pet?</string>
     <string name="error_eliminar">The pet could not be deleted</string>
+    <string name="agregar_mascota">Add pet</string>
+    <string name="editar_mascota">Edit pet</string>
+    <string name="agregar_alimento">Add food or drinks</string>
+    <string name="agregar_horario">Add schedule</string>
 
 </resources>
