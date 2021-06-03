@@ -23,4 +23,9 @@
     <string name="editar_mascota">Editar mascota</string>
     <string name="agregar_alimento">Añadir alimentos o bebidas</string>
     <string name="agregar_horario">Añadir horario</string>
+    <string name="alimentos_bebidas">Alimento o bebida</string>
+    <string name="mac">Clave MAC del dispositivo</string>
+    <string name="editar_alimento">Editar alimento o bebida</string>
+    <string name="datos_incorrectos">Datos incorrectos</string>
+    <string name="error_guardar">Error al guardar</string>
 </resources>

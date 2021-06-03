@@ -181,7 +181,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                                 listener.aceptar(mascota);
                                 dismiss();
                             } else
-                                Toast.makeText(getContext(), "Error al guardar", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), getString(R.string.error_guardar), Toast.LENGTH_SHORT).show();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
