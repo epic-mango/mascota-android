@@ -37,12 +37,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-interface EditarHorarioListener {
-    void aceptar(Horario horario);
-}
 
 public class DialogFragmentEditarHorario extends DialogFragment {
 
+    interface EditarHorarioListener {
+        void aceptar(Horario horario, boolean inserted);
+    }
 
     EditarHorarioListener listener;
     Horario horario;
@@ -51,6 +51,8 @@ public class DialogFragmentEditarHorario extends DialogFragment {
     Button btnAceptar, btnCancelar;
 
     Calendar c;
+
+    SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
 
 
     public DialogFragmentEditarHorario(EditarHorarioListener listener, Horario horario) {
@@ -78,15 +80,20 @@ public class DialogFragmentEditarHorario extends DialogFragment {
     }
 
     private void initComponentes(View v) {
+        etGramos = v.findViewById(R.id.etGramos);
+        etHora = v.findViewById(R.id.etHora);
 
         if(horario.id == -1){
             c = Calendar.getInstance();
         } else {
-            //TODO Poner las cosas que pasarían si fuera editar en lugar de crear
+            c = Calendar.getInstance();
+            c.set(Calendar.MINUTE, horario.minuto%60);
+            c.set(Calendar.HOUR_OF_DAY, horario.minuto/60);
+
+            etHora.setText(formatoHora.format(c.getTime()));
+            etGramos.setText(Integer.toString(horario.gramos));
         }
-        etGramos = v.findViewById(R.id.etGramos);
         //-----------------------------EDIT TEXT HORA
-        etHora = v.findViewById(R.id.etHora);
 
         etHora.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +105,11 @@ public class DialogFragmentEditarHorario extends DialogFragment {
 
                         c.set(Calendar.HOUR_OF_DAY, hour);
                         c.set(Calendar.MINUTE, minute);
-                        etHora.setText(new SimpleDateFormat("HH:mm").format(c.getTime()));
+                        horario.hora = formatoHora.format(c.getTime());
+                        etHora.setText(horario.hora);
 
                         horario.minuto = hour * 60 + minute;
+
                     }
                 }, c);
 
@@ -176,7 +185,9 @@ public class DialogFragmentEditarHorario extends DialogFragment {
                             String estado = json.getString("registrado");
 
                             if (estado.equals("true")) {
-                                listener.aceptar(horario);
+                                int id = Integer.parseInt(json.getString("id"));
+                                listener.aceptar(horario, true);
+                                horario.id=id;
                                 dismiss();
                             } else
                                 Toast.makeText(getContext(), getString(R.string.datos_incorrectos), Toast.LENGTH_SHORT).show();
@@ -232,7 +243,7 @@ public class DialogFragmentEditarHorario extends DialogFragment {
                             String estado = json.getString("registrado");
 
                             if (estado.equals("true")) {
-                                listener.aceptar(horario);
+                                listener.aceptar(horario, false);
                                 dismiss();
                             } else
                                 Toast.makeText(getContext(), getString(R.string.datos_incorrectos), Toast.LENGTH_SHORT).show();
@@ -255,7 +266,7 @@ public class DialogFragmentEditarHorario extends DialogFragment {
                 String mac_token = getActivity().getSharedPreferences("mac_tokens", Context.MODE_PRIVATE).getString(horario.dispositivo.mac, null);
 
                 params.put("id", Integer.toString(horario.id));
-                params.put("mac_token", horario.dispositivo.mac);
+                params.put("mac_token", mac_token);
                 params.put("minuto", Integer.toString(horario.minuto));
                 params.put("gramos", Integer.toString(horario.gramos));
 

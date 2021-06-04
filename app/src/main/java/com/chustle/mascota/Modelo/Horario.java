@@ -5,4 +5,5 @@ public class Horario {
     public Dispositivo dispositivo = null;
     public int minuto = -1;
     public int gramos = -1;
+    public String hora;
 }

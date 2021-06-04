@@ -31,7 +31,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +69,38 @@ public class ActivityAlimentacion extends AppCompatActivity {
 
         fabAgregar = findViewById(R.id.fabAgregar);
         fabAgregarAlimento = findViewById(R.id.fabAgregarAlimento);
+        fabAgregarAlimento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                agregarDispositivo();
+            }
+        });
+
+
         fabAgregarHorario = findViewById(R.id.fabAgregarHorario);
+        fabAgregarHorario.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (dispositivos.size() == 0)
+                    agregarDispositivo();
+                else {
+
+                    String[] alimentos = new String[dispositivos.size()];
+
+                    for (int i = 0; i < alimentos.length; i++) {
+                        alimentos[i] = dispositivos.get(i).alimento;
+                    }
+                    DialogFragment fragmentAlimentos = new DialogFragmentElegirAlimento(alimentos, new DialogFragmentElegirAlimento.ElegirAlimentoListener() {
+                        @Override
+                        public void aceptar(int which) {
+                            agregarHorario(dispositivos.get(which));
+                        }
+                    });
+                    fragmentAlimentos.show(ActivityAlimentacion.this.getSupportFragmentManager(), "");
+                }
+            }
+        });
 
         ViewAnimation.init(fabAgregarAlimento);
         ViewAnimation.init(fabAgregarHorario);
@@ -85,8 +119,29 @@ public class ActivityAlimentacion extends AppCompatActivity {
                 abierto = ViewAnimation.rotarFAB(fabAgregar, !abierto);
             }
         });
-        //------------------------------------------ArrayList DISPOSITIVOS
 
+
+        //----------------------------------------RECYCLER VIEW DISPOSITIVOS
+        rvHorarios = findViewById(R.id.rVDispositivos);
+        rvHorarios.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+        rvHorarios.setAdapter(new AdapterHorarios(horarios, new AdapterHorariosListener() {
+            @Override
+            public void clic(int position) {
+                editarHorario(horarios.get(position));
+            }
+
+            @Override
+            public void longClic(int position) {
+
+            }
+        }));
+
+        //------------------------------------------ArrayList DISPOSITIVOS
+        getDispositivos();
+    }
+
+    private void getDispositivos() {
 
         RequestQueue cola = Volley.newRequestQueue(getApplicationContext());
 
@@ -154,35 +209,117 @@ public class ActivityAlimentacion extends AppCompatActivity {
 
         peticion.setRetryPolicy(new DefaultRetryPolicy(3600, 0, 0));
         cola.add(peticion);
+    }
 
-        //----------------------------------------RECYCLER VIEW DISPOSITIVOS
-        rvHorarios = findViewById(R.id.rVDispositivos);
-        rvHorarios.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+    private void getHorarios(Dispositivo dispositivo) {
 
-        rvHorarios.setAdapter(new AdapterHorarios(horarios, new AdapterHorariosListener() {
+
+        RequestQueue cola = Volley.newRequestQueue(getApplicationContext());
+
+        String URL = Uri.parse(Config.URL + "horarios.php")
+                .buildUpon()
+                .appendQueryParameter("mac", dispositivo.mac)
+                .build().toString();
+
+        StringRequest peticion = new StringRequest(Request.Method.GET,
+                URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Log.i("GET HORARIOS", response);
+
+
+                            JSONObject json = new JSONObject(response);
+                            String estado = json.getString("estado");
+                            JSONArray datos = json.getJSONArray("datos");
+
+
+                            if (estado.equals("true")) {
+
+                                for (int i = 0; i < datos.length(); i++) {
+                                    JSONObject dato = (JSONObject) datos.get(i);
+
+                                    Horario horario = new Horario();
+                                    horario.dispositivo = dispositivo;
+                                    horario.id = Integer.parseInt(dato.getString("id"));
+                                    horario.gramos = Integer.parseInt(dato.getString("gramos"));
+                                    horario.minuto = Integer.parseInt(dato.getString("minuto"));
+
+                                    SimpleDateFormat formatoHora = new SimpleDateFormat("HH:mm");
+                                    Calendar c = Calendar.getInstance();
+                                    c.set(Calendar.HOUR_OF_DAY, horario.minuto / 60);
+                                    c.set(Calendar.MINUTE, horario.minuto % 60);
+
+                                    horario.hora = formatoHora.format(c.getTime());
+                                    agregarListaHorarios(horario);
+                                }
+                            }
+
+                            if (datos.length() == 0)
+                                agregarHorario(dispositivo);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("", "onErrorResponse: ", error.getCause());
+                    }
+                }) {
+
+
             @Override
-            public void clic(int position) {
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
 
+                headers.put("Authorization", getSharedPreferences("cuenta", Context.MODE_PRIVATE).getString("token", ""));
+
+                return headers;
             }
+        };
 
+        peticion.setRetryPolicy(new DefaultRetryPolicy(3600, 0, 0));
+        cola.add(peticion);
+    }
+
+    private void agregarListaHorarios(Horario horario) {
+        horarios.add(horario);
+
+        Collections.sort(horarios, new HorariosSorter());
+
+        rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
+    }
+
+    void editarHorario(Horario horario) {
+        DialogFragment dialogFragment = new DialogFragmentEditarHorario(new DialogFragmentEditarHorario.EditarHorarioListener() {
             @Override
-            public void longClic(int position) {
+            public void aceptar(Horario horario, boolean inserted) {
 
+                if (inserted){
+                    rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
+                    horarios.add(horario);
+                }
+                else
+                    rvHorarios.getAdapter().notifyItemChanged(horarios.indexOf(horario));
             }
-        }));
+        }, horario);
+
+        dialogFragment.show(getSupportFragmentManager(), "");
     }
 
     void agregarHorario(Dispositivo dispositivo) {
         Horario horario = new Horario();
         horario.dispositivo = dispositivo;
-        DialogFragment dialogFragment = new DialogFragmentEditarHorario(new EditarHorarioListener() {
-            @Override
-            public void aceptar(Horario horario) {
 
-            }
-        }, horario);
 
-        dialogFragment.show(getSupportFragmentManager(), "");
+        editarHorario(horario);
+
     }
 
     void agregarListaDipositivo(Dispositivo dispositivo, String mac_token) {
@@ -193,23 +330,22 @@ public class ActivityAlimentacion extends AppCompatActivity {
 
         dispositivos.add(dispositivo);
 
-        if (dispositivo.horarios.size() == 0) {
-            agregarHorario(dispositivo);
-        } else
-            for (Horario horario : dispositivo.horarios) {
-                horarios.add(horario);
-                rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
-            }
+        getHorarios(dispositivo);
     }
 
-    void agregarDispositivo() {
+    void editarDispositivo(Dispositivo dispositivo) {
+
         DialogFragment dialogFragment = new DialogFragmentEditarDispositivo(new EditarDispositivoListener() {
             @Override
             public void aceptar(Dispositivo dispositivo, String mac_token) {
                 agregarListaDipositivo(dispositivo, mac_token);
             }
-        }, new Dispositivo(), id);
+        }, dispositivo, id);
 
         dialogFragment.show(getSupportFragmentManager(), "");
+    }
+
+    void agregarDispositivo() {
+        editarDispositivo(new Dispositivo());
     }
 }
