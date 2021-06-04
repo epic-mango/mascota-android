@@ -31,7 +31,6 @@ import com.chustle.mascota.ActivityPrincipal;
 import com.chustle.mascota.Modelo.Mascota;
 import com.chustle.mascota.R;
 import com.chustle.mascota.REST.Config;
-import com.chustle.mascota.animator.ViewAnimation;
 import com.chustle.mascota.ui_alimentacion.ActivityAlimentacion;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -178,7 +177,7 @@ public class ActivityMascotas extends AppCompatActivity {
             @Override
             public void onLongClickListener(int position) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(ActivityMascotas.this);
-                alert.setMessage(getResources().getString(R.string.advertencia_eliminar));
+                alert.setMessage(getResources().getString(R.string.advertencia_eliminar_mascota));
                 alert.setTitle(getResources().getString(R.string.eliminar));
                 alert.setPositiveButton(getString(R.string.aceptar), new DialogInterface.OnClickListener() {
                     @Override

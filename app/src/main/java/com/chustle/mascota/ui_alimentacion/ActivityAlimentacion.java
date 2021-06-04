@@ -1,12 +1,15 @@
 package com.chustle.mascota.ui_alimentacion;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +28,7 @@ import com.chustle.mascota.Modelo.Horario;
 import com.chustle.mascota.R;
 import com.chustle.mascota.REST.Config;
 import com.chustle.mascota.animator.ViewAnimation;
+import com.chustle.mascota.ui_mascotas.ActivityMascotas;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
@@ -133,12 +137,84 @@ public class ActivityAlimentacion extends AppCompatActivity {
 
             @Override
             public void longClic(int position) {
-
+                eliminarHorario(position);
             }
         }));
 
         //------------------------------------------ArrayList DISPOSITIVOS
         getDispositivos();
+    }
+
+    private void eliminarHorario(int position) {
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(ActivityAlimentacion.this);
+        alert.setMessage(getResources().getString(R.string.advertencia_eliminar_horario));
+        alert.setTitle(getResources().getString(R.string.eliminar));
+        alert.setPositiveButton(getString(R.string.aceptar), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RequestQueue cola = Volley.newRequestQueue(getApplicationContext());
+
+                String mac_token = getSharedPreferences("mac_tokens", Context.MODE_PRIVATE).getString(horarios.get(position).dispositivo.mac, null);
+
+                String URL = Uri.parse(Config.URL + "horarios.php")
+                        .buildUpon()
+                        .appendQueryParameter("id", Integer.toString(horarios.get(position).id))
+                        .appendQueryParameter("mac_token", mac_token)
+                        .build().toString();
+
+
+                StringRequest peticion = new StringRequest(Request.Method.DELETE,
+                        URL,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    Log.i("Response", response);
+                                    JSONObject json = new JSONObject(response);
+                                    String estado = json.getString("estado");
+
+                                    if (estado.equals("true")) {
+                                        horarios.remove(position);
+                                        rvHorarios.getAdapter().notifyItemRemoved(position);
+                                    } else {
+                                        Toast.makeText(ActivityAlimentacion.this, getString(R.string.error_eliminar), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(ActivityAlimentacion.this, getString(R.string.error_red), Toast.LENGTH_SHORT).show();
+                                Log.e("", "onErrorResponse: ", error.getCause());
+                            }
+                        }) {
+
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> headers = new HashMap<>();
+
+                        headers.put("Authorization", getSharedPreferences("cuenta", Context.MODE_PRIVATE).getString("token", ""));
+
+                        return headers;
+                    }
+                };
+
+                peticion.setRetryPolicy(new DefaultRetryPolicy(3600, 0, 0));
+                cola.add(peticion);
+            }
+        });
+
+        alert.setNegativeButton(getString(R.string.cancelar), null);
+
+        alert.create();
+        alert.show();
     }
 
     private void getDispositivos() {
@@ -302,8 +378,7 @@ public class ActivityAlimentacion extends AppCompatActivity {
             public void aceptar(Horario horario, boolean inserted) {
 
                 if (inserted){
-                    rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
-                    horarios.add(horario);
+                   agregarListaHorarios(horario);
                 }
                 else
                     rvHorarios.getAdapter().notifyItemChanged(horarios.indexOf(horario));
@@ -316,8 +391,6 @@ public class ActivityAlimentacion extends AppCompatActivity {
     void agregarHorario(Dispositivo dispositivo) {
         Horario horario = new Horario();
         horario.dispositivo = dispositivo;
-
-
         editarHorario(horario);
 
     }

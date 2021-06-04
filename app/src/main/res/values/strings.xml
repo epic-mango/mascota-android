@@ -18,7 +18,7 @@
     <string name="cancelar">Cancel</string>
     <string name="aceptar">Accept</string>
     <string name="error_red">Network error</string>
-    <string name="advertencia_eliminar">Delete this pet?</string>
+    <string name="advertencia_eliminar_mascota">Delete this pet?</string>
     <string name="error_eliminar">The pet could not be deleted</string>
     <string name="agregar_mascota">Add pet</string>
     <string name="editar_mascota">Edit pet</string>
@@ -34,6 +34,7 @@
     <string name="para">for</string>
     <string name="editar_horario">Edit schedule</string>
     <string name="de">of</string>
+    <string name="advertencia_eliminar_horario">Delete this schedule?</string>
 
 
 </resources>

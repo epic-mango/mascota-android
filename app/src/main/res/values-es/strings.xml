@@ -17,7 +17,7 @@
     <string name="cancelar">Cancelar</string>
     <string name="aceptar">Aceptar</string>
     <string name="error_red">Error de red</string>
-    <string name="advertencia_eliminar">¿Eliminar esta mascota?</string>
+    <string name="advertencia_eliminar_mascota">¿Eliminar esta mascota?</string>
     <string name="error_eliminar">No se ha podido eliminar la mascota</string>
     <string name="agregar_mascota">Agregar mascota</string>
     <string name="editar_mascota">Editar mascota</string>
@@ -33,4 +33,5 @@
     <string name="para">para</string>
     <string name="editar_horario">Editar horario</string>
     <string name="de">de</string>
+    <string name="advertencia_eliminar_horario">¿Eliminar este horario?</string>
 </resources>

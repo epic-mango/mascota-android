@@ -105,6 +105,7 @@ public class DialogFragmentEditarHorario extends DialogFragment {
 
                         c.set(Calendar.HOUR_OF_DAY, hour);
                         c.set(Calendar.MINUTE, minute);
+
                         horario.hora = formatoHora.format(c.getTime());
                         etHora.setText(horario.hora);
 
