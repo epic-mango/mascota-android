@@ -9,43 +9,48 @@
     android:paddingEnd="32dp"
     android:paddingBottom="16dp">
 
+    <TextView
+        android:id="@+id/textViewe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/hora"
+        app:layout_constraintStart_toStartOf="@+id/etHora"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
         android:id="@+id/etHora"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:cursorVisible="false"
         android:ems="10"
-        android:hint="@string/alimentos_bebidas"
-        android:inputType="textPersonName"
+        android:focusable="false"
+        android:inputType="time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewe" />
 
-    <EditText
-        android:id="@+id/etMAC"
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/mac"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="@string/gramos"
         app:layout_constraintTop_toBottomOf="@id/etHora"
-        tools:layout_editor_absoluteY="40dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <EditText
-        android:id="@+id/etContrasena"
+        android:id="@+id/etGramos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="@string/pass"
-        android:inputType="textPassword"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etMAC" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+
 
     <Button
         android:id="@+id/btnAceptar"
@@ -54,9 +59,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:text="@string/aceptar"
-        app:layout_constraintEnd_toEndOf="@+id/etContrasena"
+        app:layout_constraintEnd_toEndOf="@+id/etGramos"
         app:layout_constraintStart_toEndOf="@+id/btnCancelar"
-        app:layout_constraintTop_toBottomOf="@+id/etContrasena" />
+        app:layout_constraintTop_toBottomOf="@+id/etGramos" />
 
     <Button
         android:id="@+id/btnCancelar"
@@ -65,7 +70,7 @@
         android:layout_marginTop="32dp"
         android:text="@string/cancelar"
         android:theme="@style/Boton.Gris"
-        app:layout_constraintStart_toStartOf="@+id/etContrasena"
-        app:layout_constraintTop_toBottomOf="@+id/etContrasena" />
+        app:layout_constraintStart_toStartOf="@+id/etGramos"
+        app:layout_constraintTop_toBottomOf="@+id/etGramos" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

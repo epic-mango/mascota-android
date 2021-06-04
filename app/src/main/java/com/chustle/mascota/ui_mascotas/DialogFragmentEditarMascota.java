@@ -297,7 +297,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
 
 
     private void initETNacimiento(View v) {
-        etNacimiento = v.findViewById(R.id.etNacimientoMascota);
+        etNacimiento = v.findViewById(R.id.etHora);
 
         etNacimiento.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -308,7 +308,7 @@ public class DialogFragmentEditarMascota extends DialogFragment {
                         calendar.set(year, month, dayOfMonth);
                         etNacimiento.setText(formatearFecha(calendar.getTimeInMillis()));
                     }
-                });
+                }, calendar);
 
                 fragmentDate.show(getActivity().getSupportFragmentManager(), null);
             }

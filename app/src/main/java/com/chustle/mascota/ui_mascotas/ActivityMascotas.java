@@ -170,6 +170,7 @@ public class ActivityMascotas extends AppCompatActivity {
             public void onItemClick(int position) {
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", mascotas.get(position).id);
+                bundle.putString("nombre", mascotas.get(position).nombre);
 
                 startActivity(new Intent(getApplicationContext(), ActivityAlimentacion.class).putExtras(bundle));
             }

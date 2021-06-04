@@ -37,7 +37,7 @@ import java.util.Map;
 interface EditarDispositivoListener {
     //TODO: Agregar los métodos aceptar y eliminar
 
-    void aceptar(Dispositivo dispositivo);
+    void aceptar(Dispositivo dispositivo, String mac_token);
 }
 
 public class DialogFragmentEditarDispositivo extends DialogFragment {
@@ -68,13 +68,13 @@ public class DialogFragmentEditarDispositivo extends DialogFragment {
 
         builder.setView(root);
 
-        builder.setTitle(dispositivo.MAC.equals("-1") ? getString(R.string.agregar_alimento) : getString(R.string.editar_alimento));
+        builder.setTitle(dispositivo.mac.equals("-1") ? getString(R.string.agregar_alimento) : getString(R.string.editar_alimento));
 
         return builder.create();
     }
 
     private void initComponentes(View v) {
-        etAlimento = v.findViewById(R.id.etAlimento);
+        etAlimento = v.findViewById(R.id.etHora);
         etMAC = v.findViewById(R.id.etMAC);
         etContrasena = v.findViewById(R.id.etContrasena);
 
@@ -89,6 +89,12 @@ public class DialogFragmentEditarDispositivo extends DialogFragment {
 
         //---------------------------------------BUTTON CANCELAR
         btnCancelar = v.findViewById(R.id.btnCancelar);
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
     }
 
     private void aceptar() {
@@ -98,7 +104,7 @@ public class DialogFragmentEditarDispositivo extends DialogFragment {
                 etContrasena.getText().toString().equals(""))
             Toast.makeText(getActivity().getApplicationContext(), getString(R.string.faltan_datos), Toast.LENGTH_SHORT).show();
         else {
-            dispositivo.MAC = etMAC.getText().toString();
+            dispositivo.mac = etMAC.getText().toString();
             dispositivo.alimento = etAlimento.getText().toString();
                     putDispositivo();
         }
@@ -126,9 +132,9 @@ public class DialogFragmentEditarDispositivo extends DialogFragment {
 
                             JSONObject json = new JSONObject(response);
                             String estado = json.getString("registrado");
-
                             if (estado.equals("true")) {
-                                listener.aceptar(dispositivo);
+                                String mac_token = json.getString("mac_token");
+                                listener.aceptar(dispositivo, mac_token);
                                 dismiss();
                             } else
                                 Toast.makeText(getContext(), getString(R.string.datos_incorrectos), Toast.LENGTH_SHORT).show();
@@ -149,7 +155,7 @@ public class DialogFragmentEditarDispositivo extends DialogFragment {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
 
-                params.put("mac", dispositivo.MAC);
+                params.put("mac", dispositivo.mac);
                 params.put("pass", etContrasena.getText().toString());
                 params.put("mascota", Integer.toString(mascota));
                 params.put("alimento", dispositivo.alimento);

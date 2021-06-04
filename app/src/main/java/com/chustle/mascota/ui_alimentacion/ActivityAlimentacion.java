@@ -1,6 +1,7 @@
 package com.chustle.mascota.ui_alimentacion;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +44,7 @@ public class ActivityAlimentacion extends AppCompatActivity {
     RecyclerView rvHorarios;
     boolean abierto = false;
     int id;
+    String nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +52,14 @@ public class ActivityAlimentacion extends AppCompatActivity {
         setContentView(R.layout.activity_alimentacion);
 
         inicializarComponentes();
+
+        setTitle(getString(R.string.alimentos_bebidas) + " " + getString(R.string.de) + " " + nombre);
+
     }
 
     private void inicializarComponentes() {
         id = getIntent().getExtras().getInt("id");
+        nombre = getIntent().getExtras().getString("nombre");
 
         //---------------------------------FLOATING ACTION BUTTONS
 
@@ -102,25 +108,19 @@ public class ActivityAlimentacion extends AppCompatActivity {
                             String estado = json.getString("estado");
                             JSONArray datos = json.getJSONArray("datos");
 
+
                             if (estado.equals("true")) {
 
                                 for (int i = 0; i < datos.length(); i++) {
                                     JSONObject dato = (JSONObject) datos.get(i);
+                                    JSONObject token = json.getJSONObject("mac_tokens");
+
                                     Dispositivo dispositivo = new Dispositivo();
-                                    dispositivo.MAC = dato.getString("mac");
+                                    dispositivo.mac = dato.getString("mac");
                                     dispositivo.alimento = dato.getString("alimento");
                                     dispositivo.serie = Integer.parseInt(dato.getString("serie"));
 
-
-                                    dispositivos.add(dispositivo);
-
-                                    if (dispositivo.horarios.size() == 0) {
-                                        agregarHorario();
-                                    } else
-                                        for (Horario horario : dispositivo.horarios) {
-                                            horarios.add(horario);
-                                            rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
-                                        }
+                                    agregarListaDipositivo(dispositivo, token.getString(dispositivo.mac));
                                 }
                             }
 
@@ -172,15 +172,41 @@ public class ActivityAlimentacion extends AppCompatActivity {
         }));
     }
 
-    void agregarHorario(){
+    void agregarHorario(Dispositivo dispositivo) {
+        Horario horario = new Horario();
+        horario.dispositivo = dispositivo;
+        DialogFragment dialogFragment = new DialogFragmentEditarHorario(new EditarHorarioListener() {
+            @Override
+            public void aceptar(Horario horario) {
 
+            }
+        }, horario);
+
+        dialogFragment.show(getSupportFragmentManager(), "");
+    }
+
+    void agregarListaDipositivo(Dispositivo dispositivo, String mac_token) {
+        SharedPreferences preferences = getSharedPreferences("mac_tokens", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(dispositivo.mac, mac_token);
+        editor.commit();
+
+        dispositivos.add(dispositivo);
+
+        if (dispositivo.horarios.size() == 0) {
+            agregarHorario(dispositivo);
+        } else
+            for (Horario horario : dispositivo.horarios) {
+                horarios.add(horario);
+                rvHorarios.getAdapter().notifyItemInserted(horarios.indexOf(horario));
+            }
     }
 
     void agregarDispositivo() {
         DialogFragment dialogFragment = new DialogFragmentEditarDispositivo(new EditarDispositivoListener() {
             @Override
-            public void aceptar(Dispositivo dispositivo) {
-
+            public void aceptar(Dispositivo dispositivo, String mac_token) {
+                agregarListaDipositivo(dispositivo, mac_token);
             }
         }, new Dispositivo(), id);
 

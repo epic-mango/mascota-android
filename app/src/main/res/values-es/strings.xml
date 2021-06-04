@@ -28,4 +28,9 @@
     <string name="editar_alimento">Editar alimento o bebida</string>
     <string name="datos_incorrectos">Datos incorrectos</string>
     <string name="error_guardar">Error al guardar</string>
+    <string name="hora">Hora</string>
+    <string name="gramos">Gramos</string>
+    <string name="para">para</string>
+    <string name="editar_horario">Editar horario</string>
+    <string name="de">de</string>
 </resources>

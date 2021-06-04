@@ -14,16 +14,18 @@ import java.util.Calendar;
 public class DialogFragmentDatePicker extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
     OnDateSet listener;
+    Calendar c;
 
-    public DialogFragmentDatePicker(OnDateSet listener) {
+    public DialogFragmentDatePicker(OnDateSet listener, Calendar c) {
         this.listener = listener;
+        this.c = c;
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
-        final Calendar c = Calendar.getInstance();
+
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
